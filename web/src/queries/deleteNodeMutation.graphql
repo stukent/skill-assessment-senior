@@ -1,0 +1,5 @@
+mutation deleteNode($id: ID!) {
+  deleteNode(id: $id) {
+    numDeleted
+  }
+}

@@ -1,0 +1,6 @@
+query quizSubmission($id: ID!) {
+  node(id: $id) {
+    id
+    ...QuizSubmission
+  }
+}

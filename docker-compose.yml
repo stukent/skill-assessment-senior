@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  quiz-server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    volumes:
+      - ./server/src:/home/node/app/src
+      - ./server/nodemon.json:/home/node/app/nodemon.json
+      - ./server/schema.graphql:/home/node/app/schema.graphql
+    ports:
+      - 3000:3000
+    command: npm run watch
+    stop_grace_period: 0.25s
+  db:
+    image: postgres
+    hostname: db
+    volumes:
+      - data:/data/db
+    environment:
+      - POSTGRES_DB=quiz_manager
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  pgadmin:
+    build:
+      context: ./pgadmin
+      dockerfile: Dockerfile
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=test@test.com
+      - PGADMIN_DEFAULT_PASSWORD=postgres
+      - GUNICORN_ACCESS_LOGFILE=/tmp/access.log
+    ports:
+      - "3002:80"
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    volumes:
+      - ./web/src:/home/node/app/src
+    ports:
+      - 3001:3001
+    command: npm run dev -- --host
+
+volumes:
+  data: {}

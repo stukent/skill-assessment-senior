@@ -1,0 +1,16 @@
+schema:
+  - schema.graphql
+config:
+  wrapEntireFieldDefinitions: true
+  mapperTypeSuffix: Model
+  entireFieldWrapperValue: T | Promise<T> | (() => T | Promise<T>)
+  resolverTypeWrapperSignature: T | Promise<T> | (() => T | null | Promise<T | null>)
+  mappers:
+    User: ./models/User.ts#User
+    Quiz: ./models/Quiz.ts#Quiz
+    QuizSubmission: ./models/QuizSubmission.ts#QuizSubmission
+generates:
+  ./src/schema.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers

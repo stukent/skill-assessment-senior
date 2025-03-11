@@ -1,0 +1,42 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "DEBUG=server node --env-file=.env --import ./import.js src/index.ts",
+    "watch": "DEBUG=server nodemon -L src/index.ts",
+    "types": "tsc --noEmit",
+    "generate": "graphql-codegen",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "type": "module",
+  "author": "Sam Marks",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.9.5",
+    "@graphql-tools/schema": "^10.0.0",
+    "@graphql-tools/utils": "^10.0.8",
+    "bcrypt": "^5.1.1",
+    "debug": "^4.3.4",
+    "graphql": "^16.8.1",
+    "graphql-relay": "^0.10.0",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.0.1",
+    "objection": "^3.1.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-resolvers": "^4.0.1",
+    "@types/node": "^20.8.10",
+    "embedded-postgres": "^17.4.0-beta.15",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
+    "vitest": "^3.0.8"
+  }
+}

@@ -1,0 +1,5 @@
+query quizzes {
+  quizzes {
+    ...Quiz
+  }
+}
