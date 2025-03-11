@@ -1,0 +1,159 @@
+interface Node {
+  id: ID!
+}
+
+enum UserGroup {
+  TEACHER
+  STUDENT
+  ANONYMOUS
+}
+
+type User implements Node {
+  id: ID!
+  # eslint-disable-next-line @graphql-eslint/no-typename-prefix
+  username: String!
+  group: UserGroup!
+}
+
+interface QuizQuestion {
+  id: String!
+  name: String!
+}
+
+type MultipleChoiceQuizQuestion implements QuizQuestion {
+  id: String!
+  name: String!
+  options: [MultipleChoiceQuizQuestionOption!]!
+}
+input MultipleChoiceQuizQuestionInput {
+  id: String!
+  name: String!
+  options: [MultipleChoiceQuizQuestionOptionInput!]!
+}
+
+type MultipleChoiceQuizQuestionOption {
+  value: String!
+  name: String!
+  isCorrect: Boolean!
+}
+input MultipleChoiceQuizQuestionOptionInput {
+  value: String!
+  name: String!
+  isCorrect: Boolean!
+}
+type MultipleChoiceQuizSubmissionData implements QuizSubmissionData {
+  questionId: String!
+  value: String!
+}
+input MultipleChoiceQuizSubmissionDataInput {
+  questionId: String!
+  value: String!
+}
+
+# We have to do this because GraphQL doesn't support interfaces for input
+# types. This is an alternate way of representing the different types of
+# questions you might be able to add to a quiz.
+input QuizQuestionInput {
+  multipleChoice: MultipleChoiceQuizQuestionInput
+}
+
+type QuizConfiguration {
+  questions: [QuizQuestion!]!
+}
+input QuizConfigurationInput {
+  questions: [QuizQuestionInput!]!
+}
+
+type Quiz implements Node {
+  id: ID!
+  name: String!
+  user: User!
+  configuration: QuizConfiguration!
+  submissions: [QuizSubmission!]!
+    @auth(requires: VIEW_QUIZ_SUBMISSIONS, own: VIEW_OWN_QUIZ_SUBMISSIONS)
+}
+input QuizInput {
+  name: String!
+  configuration: QuizConfigurationInput!
+}
+input UpdateQuizInput {
+  id: ID!
+  patch: QuizInput!
+}
+
+interface QuizSubmissionData {
+  questionId: String!
+}
+input QuizSubmissionDataInput {
+  multipleChoice: MultipleChoiceQuizSubmissionDataInput
+}
+
+type QuizSubmission implements Node {
+  id: ID!
+  quiz: Quiz!
+  user: User!
+  submissionData: [QuizSubmissionData!]!
+  grade: Float!
+}
+input CreateQuizSubmissionInput {
+  # The ID of the quiz you are creating a submission for.
+  id: ID!
+  submissionData: [QuizSubmissionDataInput!]!
+}
+
+type Query {
+  viewer: User
+  node(id: ID!): Node
+  quizzes: [Quiz!]!
+  quizSubmissions: [QuizSubmission!]!
+}
+
+type DeleteResponse {
+  numDeleted: Int!
+}
+type QuizResponse {
+  quiz: Quiz!
+}
+type QuizSubmissionResponse {
+  quizSubmission: QuizSubmission!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+type LoginResponse {
+  user: User!
+  jwt: String!
+}
+
+type Mutation {
+  # Logs the user in.
+  login(input: LoginInput!): LoginResponse! @auth(requires: LOGIN)
+  # Deletes a node in the system.
+  deleteNode(id: ID!): DeleteResponse!
+  # Creates a new quiz.
+  createQuiz(input: QuizInput!): QuizResponse! @auth(requires: CREATE_QUIZ)
+  # Updates an existing quiz.
+  updateQuiz(input: UpdateQuizInput): QuizResponse!
+    @auth(requires: UPDATE_QUIZ, own: UPDATE_OWN_QUIZ)
+  # Creates a new quiz submission.
+  createQuizSubmission(input: CreateQuizSubmissionInput!): QuizSubmissionResponse!
+    @auth(requires: SUBMIT_QUIZ)
+}
+
+directive @auth(
+  requires: Permission
+  own: Permission
+) on OBJECT | FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @grant(to: [UserGroup!]!) on ENUM_VALUE
+
+enum Permission {
+  LOGIN @grant(to: [ANONYMOUS])
+  CREATE_QUIZ @grant(to: [TEACHER])
+  UPDATE_QUIZ
+  UPDATE_OWN_QUIZ @grant(to: [TEACHER])
+  VIEW_QUIZ_SUBMISSIONS
+  VIEW_OWN_QUIZ_SUBMISSIONS @grant(to: [TEACHER])
+  SUBMIT_QUIZ @grant(to: [STUDENT])
+}

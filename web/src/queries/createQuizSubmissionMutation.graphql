@@ -1,0 +1,7 @@
+mutation createQuizSubmission($input: CreateQuizSubmissionInput!) {
+  createQuizSubmission(input: $input) {
+    quizSubmission {
+      ...QuizSubmission
+    }
+  }
+}

@@ -1,0 +1,44 @@
+fragment User on User {
+  id
+  username
+  group
+}
+
+fragment MultipleChoiceQuizQuestion on MultipleChoiceQuizQuestion {
+  id
+  name
+  options {
+    value
+    name
+    isCorrect
+  }
+}
+fragment Quiz on Quiz {
+  id
+  name
+  configuration {
+    questions {
+      __typename
+      ...MultipleChoiceQuizQuestion
+    }
+  }
+}
+
+fragment MultipleChoiceQuizSubmissionData on MultipleChoiceQuizSubmissionData {
+  questionId
+  value
+}
+fragment QuizSubmission on QuizSubmission {
+  id
+  grade
+  submissionData {
+    ...MultipleChoiceQuizSubmissionData
+  }
+  user {
+    ...User
+  }
+  quiz {
+    id
+    name
+  }
+}

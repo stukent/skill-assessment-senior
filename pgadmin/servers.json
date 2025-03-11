@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Quiz Manager",
+      "Group": "Servers",
+      "Port": 5432,
+      "Username": "postgres",
+      "Host": "db",
+      "MaintenanceDB": "postgres",
+      "PasswordExecCommand": "echo 'postgres'",
+      "PasswordExecExpiration": 100
+    }
+  }
+}

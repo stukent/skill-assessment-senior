@@ -1,0 +1,30 @@
+body, #root {
+  margin: 0;
+  display: flex;
+  flex: 1;
+}
+#root > div {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 100%;
+}
+body {
+  min-height: 100vh;
+}
+
+@font-face {
+  font-family: 'adobe-clean';
+  src: url('./assets/SourceSans3-VariableFont_wght.ttf');
+}
+@font-face {
+  font-family: 'adobe-clean';
+  font-style: italic;
+  src: url('./assets/SourceSans3-Italic-VariableFont_wght.ttf');
+}
+
+button * {
+  line-height: 1;
+}
