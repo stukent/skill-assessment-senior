@@ -33,7 +33,8 @@ These credentials are also visible directly on the login page in case you forget
 
 To start the quiz manager:
 
-1. Make sure you have Node version 20+ and Docker installed.
+1. Make sure you have Node version 20+ and Docker installed. If you are on WSL
+  or Linux, [there are potentially more steps for you to run.](#wsl)
 1. Run `npm install` in both the `web` and `server` folders.
 1. Run `docker-compose up` in the root of the repository.
 
@@ -59,3 +60,24 @@ To access PGAdmin, go to http://localhost:3002 and use these credentials:
 
 You may be prompted for the database password whenever opening it. The database
 password is `postgres`.
+
+### WSL
+
+The server + web themselves use Docker for execution, so should not have any
+environment-specific requirements other than a Docker installation.
+
+The unit tests have been tested on a ARM Windows installation inside a Parallels VM
+with WSL2 running Ubuntu. In order to get the embedded PostgreSQL instance to run
+inside the container, you'll need to run some commands to install the proper locales:
+
+```shell
+sudo locale-gen en_US.UTF-8
+sudo dpkg-reconfigure locales # Select only "en_US.UTF-8" and then set it as the default
+```
+
+Outside of those commands, make sure you are not running the repository in your `/mnt/c`
+folder. The local PostgreSQL database won't be able to set permissions properly inside
+that folder, and won't be able to start successfully to run your tests.
+
+After running those locale commands and copying the files to the Ubuntu user's home
+directory, I was able to run the unit tests successfully.
